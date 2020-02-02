@@ -9,6 +9,7 @@ import numpy as np
 import heapq
 import math
 from typing import Dict
+import matplotlib.pyplot as plt
 
 
 def cal_zero_crossing(laplacian_result):
@@ -125,11 +126,13 @@ class Node:
         q_p = (other.x - self.x, other.y - self.y)
         d_prime = (self.p_y, -self.p_x)
         l_p_q = q_p if dot(d_prime, q_p) >= 0 else (-q_p[0], -q_p[1])
+        tmp = math.sqrt(l_p_q[0]**2 + l_p_q[1] ** 2)
+        l_p_q = (l_p_q[0] / tmp, l_p_q[1] / tmp)
         d_p = dot(d_prime, l_p_q)
 
         d_q_prime = (other.p_y, -other.p_x)
         d_q = dot(l_p_q, d_q_prime)
-        f_d = 1/math.pi * (1/math.cos(d_p) + 1/math.cos(d_q))
+        f_d = 1/math.pi * (math.acos(d_p) + math.acos(d_q))
         return 0.43 * self.zero_crossing + 0.43 * f_d + 0.14 * other.g_magnitude
         
     def __lt__(self, other):
@@ -154,8 +157,6 @@ def graph_search(start: Node, all_nodes: Dict[int, Node], width, height, end: in
         this_node.explored = True
         if this_node.index == end:
             return this_node
-        count += 1
-        print(f"count is {count}")
         for ver in range(-1, 2):
             for hor in range(-1, 2):
                 cur_x, cur_y = this_node.x + ver, this_node.y + hor
@@ -175,9 +176,28 @@ def graph_search(start: Node, all_nodes: Dict[int, Node], width, height, end: in
 
 
 if __name__ == "__main__":
+
+    ddepth = cv.CV_16S
+    kernel_size = 3
+    image_name = 'trump.jpg'
+    src = cv.imread(cv.samples.findFile(image_name), cv.IMREAD_COLOR) # Load an image
+    if src is None:
+        print ('Error opening image')
+        print ('Program Arguments: [image_name -- default lena.jpg]')
+    src = cv.GaussianBlur(src, (3, 3), 0)
+    src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+
     all_nodes, width, height = calculate_info("trump.jpg")
     print("start search......")
-    graph_search(all_nodes[160*width+220], all_nodes, width, height, 170*width+221)
+    end_node = graph_search(all_nodes[310*width+455], all_nodes, width, height, 355*width+510)
+    start_node = all_nodes[360*width+415]
+    cur_node = end_node
+    display_img = np.dstack([src_gray, src_gray, src_gray])
+    while cur_node is not None:
+        display_img[cur_node.x, cur_node.y, :] = [150, 0, 0]
+        cur_node = cur_node.pred
+    plt.imshow(display_img)
+    plt.show()
 
     # abs_dst = cv.convertScaleAbs(dst)
     # cv.imshow(window_name, abs_dst)
