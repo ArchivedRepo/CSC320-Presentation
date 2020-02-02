@@ -10,6 +10,7 @@ import heapq
 import math
 from typing import Dict
 import matplotlib.pyplot as plt
+import time
 
 
 def cal_zero_crossing(laplacian_result):
@@ -176,10 +177,11 @@ def graph_search(start: Node, all_nodes: Dict[int, Node], width, height, end: in
 
 
 if __name__ == "__main__":
+    
 
     ddepth = cv.CV_16S
     kernel_size = 3
-    image_name = 'trump.jpg'
+    image_name = 'thanos.jpg'
     src = cv.imread(cv.samples.findFile(image_name), cv.IMREAD_COLOR) # Load an image
     if src is None:
         print ('Error opening image')
@@ -187,18 +189,32 @@ if __name__ == "__main__":
     src = cv.GaussianBlur(src, (3, 3), 0)
     src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
 
-    all_nodes, width, height = calculate_info("trump.jpg")
-    print("start search......")
-    end_node = graph_search(all_nodes[310*width+455], all_nodes, width, height, 355*width+510)
-    start_node = all_nodes[360*width+415]
-    cur_node = end_node
+    all_nodes, width, height = calculate_info(image_name)
     display_img = np.dstack([src_gray, src_gray, src_gray])
-    while cur_node is not None:
-        display_img[cur_node.x, cur_node.y, :] = [150, 0, 0]
-        cur_node = cur_node.pred
+    print("start search......")
+    start_index = None
+    def button_pressed(event):
+        global start_index
+        print (int(event.ydata), int(event.xdata))
+        if start_index is None:
+            start_index = int(event.ydata) * width + int(event.xdata)
+            
+        else:
+            end_index = int(event.ydata) * width + int(event.xdata)
+            print("begin searching")
+            end_node = graph_search(all_nodes[start_index], all_nodes, width, height, end_index)
+            print("searching Complete")
+            cur_node = end_node
+            while cur_node is not None:
+                display_img[cur_node.x, cur_node.y, :] = [225, 225, 0]
+                cur_node = cur_node.pred
+            plt.close()
+            plt.imshow(display_img)
+            plt.show()
+            print("Finished")
+    plt.connect('button_release_event', button_pressed)
     plt.imshow(display_img)
     plt.show()
-
     # abs_dst = cv.convertScaleAbs(dst)
     # cv.imshow(window_name, abs_dst)
     # cv.waitKey(0)
