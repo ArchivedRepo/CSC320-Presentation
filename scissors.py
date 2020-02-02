@@ -76,7 +76,7 @@ def calculate_info(image_name):
         print ('Error opening image')
         print ('Program Arguments: [image_name -- default lena.jpg]')
         return -1
-    src = cv.GaussianBlur(src, (3, 3), 0)
+    # src = cv.GaussianBlur(src, (3, 3), 0)
     src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
     height, width = src_gray.shape
     laplacian_result = cv.Laplacian(src_gray, ddepth, ksize=kernel_size)
@@ -186,7 +186,7 @@ if __name__ == "__main__":
     if src is None:
         print ('Error opening image')
         print ('Program Arguments: [image_name -- default lena.jpg]')
-    src = cv.GaussianBlur(src, (3, 3), 0)
+    # src = cv.GaussianBlur(src, (3, 3), 0)
     src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
 
     all_nodes, width, height = calculate_info(image_name)
