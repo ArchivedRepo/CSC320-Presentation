@@ -92,8 +92,9 @@ def calculate_info(image_name):
     for i in range(height):
         for j in range(width):
             cur_index = index(i, j)
+            divisor = math.sqrt(partial_x[i, j] ** 2 + partial_y[i, j] ** 2)
             new_node = Node(i,j,cur_index,zero_crossing[i,j],\
-                gradient_magnitude[i,j], partial_x[i, j], partial_y[i, j])
+                gradient_magnitude[i,j], partial_x[i, j]/divisor, partial_y[i, j]/divisor)
             all_nodes[cur_index] = new_node
     return all_nodes, width, height
 
@@ -138,7 +139,7 @@ class Node:
         return self.index == value.index
 
 
-def graph_search(start: Node, all_nodes: Dict[int, Node], width, height):
+def graph_search(start: Node, all_nodes: Dict[int, Node], width, height, end: int):
     def in_range(_i, _j):
         if _i < height and _i >= 0 and _j < width and _j >= 0:
             return True
@@ -151,6 +152,8 @@ def graph_search(start: Node, all_nodes: Dict[int, Node], width, height):
     while len(queue) != 0:
         this_node = heapq.heappop(queue)
         this_node.explored = True
+        if this_node.index == end:
+            return this_node
         count += 1
         print(f"count is {count}")
         for ver in range(-1, 2):
@@ -174,7 +177,7 @@ def graph_search(start: Node, all_nodes: Dict[int, Node], width, height):
 if __name__ == "__main__":
     all_nodes, width, height = calculate_info("trump.jpg")
     print("start search......")
-    graph_search(all_nodes[160*width+220], all_nodes, width, height)
+    graph_search(all_nodes[160*width+220], all_nodes, width, height, 170*width+221)
 
     # abs_dst = cv.convertScaleAbs(dst)
     # cv.imshow(window_name, abs_dst)
