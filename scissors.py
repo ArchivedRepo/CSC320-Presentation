@@ -12,6 +12,8 @@ from typing import Dict
 import matplotlib.pyplot as plt
 import time
 
+raise DeprecationWarning("This file is deprecated and should not be use!")
+assert False
 
 def cal_zero_crossing(laplacian_result):
     """
@@ -187,6 +189,8 @@ if __name__ == "__main__":
         print ('Error opening image')
         print ('Program Arguments: [image_name -- default lena.jpg]')
     # src = cv.GaussianBlur(src, (3, 3), 0)
+    print(src.shape)
+    exit(0);
     src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
 
     all_nodes, width, height = calculate_info(image_name)
