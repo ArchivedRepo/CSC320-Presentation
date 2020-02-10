@@ -17,15 +17,17 @@ from cost import construct_dict
 from dijkstra import graph_search
 
 if __name__ == "__main__":
-    
     image_name = 'thanos.jpg'
-    # G, height, width = construct_dict(image_name)
-    with open("G.pickle", 'rb') as ptr:
-        G = pickle.load(ptr)
+    try:
+        with open(f"{image_name}.picke", 'rb') as ptr:
+            G = pickle.load(ptr)
+    except FileNotFoundError:
+        G, height, width = construct_dict(image_name)
+        with open(f"{image_name}.picke", 'wb') as ptr:
+            pickle.dump(G, ptr)
 
     ddepth = cv.CV_16S
     kernel_size = 3
-    image_name = 'thanos.jpg'
     src = cv.imread(cv.samples.findFile(image_name), cv.IMREAD_COLOR) # Load an image
     if src is None:
         print ('Error opening image')
@@ -54,6 +56,7 @@ if __name__ == "__main__":
                 cur_node = cur_node.pred
             imshow_obj.set_data(display_img)
             plt.draw()
+            start = None
             print("Finished")
     plt.connect('button_release_event', button_pressed)
     imshow_obj = plt.imshow(display_img)

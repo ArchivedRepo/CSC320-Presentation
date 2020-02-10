@@ -128,6 +128,8 @@ def construct_dict(image_name):
                 f_d = 1/math.pi * (math.acos(d_p) + math.acos(d_q))
                 dist[(row_other, col_other)] = WZ * f_z + WD * f_d + WG * f_g
             G[(row, col)] = dist
+    print("")
+    print("Distance Metric Construction Complete!")
     return G, height, width
 
                 
